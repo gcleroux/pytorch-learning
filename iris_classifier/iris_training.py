@@ -35,7 +35,7 @@ optimizer = torch.optim.SGD(model.parameters(), model.lr)
 # %%
 # Training loop
 
-for epoch in range(1000):
+for epoch in range(2000):
     
     # Forward pass
     y_predicted = model(X_train)
