@@ -1,7 +1,5 @@
 # %%
 import torch
-from torch import optim
-from torch._C import device
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision
@@ -11,6 +9,8 @@ from model import NeuralNet
 
 # %%
 # Hyper parameters
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 input_size = 28 * 28    # Size of a picture
 hidden_size = 142       # Why not?
 num_classes = 10        # 0 - 9
@@ -46,7 +46,8 @@ plt.show()
 
 # %%
 # Traning the model
-model = NeuralNet(input_size=input_size, hidden_size=hidden_size, output_size=num_classes, lr=lr)
+model = NeuralNet(input_size=input_size, hidden_size=hidden_size, 
+                  output_size=num_classes, lr=lr).to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr)
@@ -56,7 +57,8 @@ for epoch in range(num_epochs):
     for i, (samples, labels) in enumerate(train_loader):
         
         # Reshaping the images
-        samples = samples.reshape(-1, input_size)
+        samples = samples.reshape(-1, input_size).to(device)
+        labels = labels.to(device)
     
         predictions = model(samples)
         loss = criterion(predictions, labels)
@@ -75,7 +77,8 @@ with torch.no_grad():
     
     for images, labels in test_loader:
         
-        images = images.reshape(-1, input_size)
+        images = images.reshape(-1, input_size).to(device)
+        labels = labels.to(device)
         predictions = model(images)
         
         # Calculating the accuracy
